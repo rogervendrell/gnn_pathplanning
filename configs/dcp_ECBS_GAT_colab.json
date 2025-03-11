@@ -3,7 +3,7 @@
   "agent": "DecentralPlannerAgentLocal",
   "data_loader": "DecentralPlannerDataLoader",
 
-  "data_root": "/content/DataSource_DMap_FixedComR",
+  "data_root": "/content/DataSource_DMap_FixedComR/EffectiveDensity/Training/",
   "save_data": "/content/trainingResults",
   "save_tb_data": "/content/trainingResults/Tensorboard_CG50",
 
