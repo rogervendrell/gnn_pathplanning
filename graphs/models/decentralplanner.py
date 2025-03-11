@@ -10,9 +10,6 @@ import utils.graphUtils.graphML as gml
 import utils.graphUtils.graphTools
 from torchsummaryX import summary
 
-import torch_geometric as tg
-from torch_geometric.nn import GATConv
-
 
 class DecentralPlannerNet(nn.Module):
     def __init__(self, config):
