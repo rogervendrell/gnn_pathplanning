@@ -11,7 +11,7 @@ import pandas as pd
 import seaborn as sns
 from cycler import cycler
 from matplotlib import rc
-matplotlib.font_manager._rebuild()
+matplotlib.font_manager._load_fontmanager()
 plt.rcParams['font.family'] = "serif"
 plt.rcParams.update({'font.size': 20})
 # rc('text', usetex=True)

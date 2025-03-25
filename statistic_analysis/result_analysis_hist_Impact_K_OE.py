@@ -1,20 +1,21 @@
+import matplotlib
+import pandas as pd
+import plotly.graph_objects as go
+import matplotlib.ticker as ticker
 from scipy.io import loadmat
 import numpy as np
 import os
 import csv
 import matplotlib.pyplot as plt
 import matplotlib.font_manager
-matplotlib.font_manager._rebuild()
+matplotlib.font_manager._load_fontmanager()
 plt.rcParams['font.family'] = "serif"
 
-import matplotlib.ticker as ticker
-import plotly.graph_objects as go
 plt.rcParams.update({'font.size': 22})
-import pandas as pd
 
-import matplotlib
 matplotlib.rcParams['pdf.fonttype'] = 42
 matplotlib.rcParams['ps.fonttype'] = 42
+
 
 class StatisticAnalysis:
     def __init__(self, data_root, SAVEDATA_FOLDER, exp_setup,  trained_num_agent, list_testing_num_agent):
@@ -98,21 +99,18 @@ class StatisticAnalysis:
             label_set1_K = int(label_set1.split('K')[1].split('-HS')[0])
             label_set1_HS = int(label_set1.split('-HS')[1])
 
-
-
             searched_results_set1 = [item for item in self.data_list
-                                if item['num_agents_trained'] == self.trained_num_agent
-                                and item['num_agents_testing'] == testing_num_agent
-                                and item['type'].lower() == label_set1_type
-                                and item['K'] == label_set1_K
-                                and item['hidden_state'] == label_set1_HS
-                                ]
+                                     if item['num_agents_trained'] == self.trained_num_agent
+                                     and item['num_agents_testing'] == testing_num_agent
+                                     and item['type'].lower() == label_set1_type
+                                     and item['K'] == label_set1_K
+                                     and item['hidden_state'] == label_set1_HS
+                                     ]
 
             label_set2 = self.exp_setup[1]
             label_set2_type = label_set2.split(' ')[0].lower()
             label_set2_K = int(label_set2.split('K')[1].split('-HS')[0])
             label_set2_HS = int(label_set2.split('-HS')[1])
-
 
             searched_results_set2 = [item for item in self.data_list
                                      if item['num_agents_trained'] == self.trained_num_agent
@@ -138,13 +136,14 @@ class StatisticAnalysis:
 
                 for index in range(len(hist_numAgentReachGoal_set1)):
                     list_numAgents.append(str(index))
-                    hist_numAgentReachGoal_norm_set1.append(hist_numAgentReachGoal_set1[index]/total_num_cases)
-                    hist_numAgentReachGoal_norm_set2.append(hist_numAgentReachGoal_set2[index]/total_num_cases)
+                    hist_numAgentReachGoal_norm_set1.append(
+                        hist_numAgentReachGoal_set1[index]/total_num_cases)
+                    hist_numAgentReachGoal_norm_set2.append(
+                        hist_numAgentReachGoal_set2[index]/total_num_cases)
 
-                self.plot_figure(testing_num_agent, list_numAgents, total_num_cases, hist_numAgentReachGoal_norm_set1, hist_numAgentReachGoal_norm_set2, label_set1_K, title_text, text_legend)
+                self.plot_figure(testing_num_agent, list_numAgents, total_num_cases, hist_numAgentReachGoal_norm_set1,
+                                 hist_numAgentReachGoal_norm_set2, label_set1_K, title_text, text_legend)
                 pass
-
-
 
     def plot_figure(self, testing_num_agent, list_numAgents, total_num_cases, hist_data_set1, hist_data_set2, label_set1_K, title_text, text_legend, use_log_scale=False):
 
@@ -158,7 +157,7 @@ class StatisticAnalysis:
 
         width = 0.35  # the width of the bars
         label_width = 1.05
-        if len(list_numAgents)<20 and label_set1_K == 2:
+        if len(list_numAgents) < 20 and label_set1_K == 2:
             step_size = 2
             self.ax.set_ylabel('Proportion of cases'.format(total_num_cases))
         else:
@@ -167,11 +166,13 @@ class StatisticAnalysis:
         label_pos = np.arange(len(list_numAgents))
         # rects1 = self.ax.bar(x - label_width / 2 + width * 1, hist_numAgentReachGoal, width, label=text_legend)
 
-        hist_set1 = self.ax.bar(label_pos, hist_data_set1, align='center', label='{}'.format(text_legend[0]), ls='dotted', lw=3, fc=(0, 0, 1, 0.5))
-        hist_set2 = self.ax.bar(label_pos, hist_data_set2, align='center', label='{}'.format(text_legend[1]),lw=3, fc=(1, 0, 0, 0.5))
+        hist_set1 = self.ax.bar(label_pos, hist_data_set1, align='center', label='{}'.format(
+            text_legend[0]), ls='dotted', lw=3, fc=(0, 0, 1, 0.5))
+        hist_set2 = self.ax.bar(label_pos, hist_data_set2, align='center', label='{}'.format(
+            text_legend[1]), lw=3, fc=(1, 0, 0, 0.5))
 
         start, end = self.ax.get_xlim()
-        self.ax.xaxis.set_ticks(np.arange(0,len(list_numAgents), step_size))
+        self.ax.xaxis.set_ticks(np.arange(0, len(list_numAgents), step_size))
         # plt.xticks(label_pos)
         # self.ax.set_xticklabels(label_pos)
         # self.autolabel(rects1)
@@ -190,11 +191,12 @@ class StatisticAnalysis:
 
     def save_fig(self, title):
         # name_save_fig = os.path.join(self.SAVEDATA_FOLDER, "{}_{}.pdf".format(self.title_text, title))
-        name_save_fig = os.path.join(self.SAVEDATA_FOLDER, "{}.jpg".format(title))
-        name_save_fig_pdf = os.path.join(self.SAVEDATA_FOLDER, "{}.pdf".format(title))
+        name_save_fig = os.path.join(
+            self.SAVEDATA_FOLDER, "{}.jpg".format(title))
+        name_save_fig_pdf = os.path.join(
+            self.SAVEDATA_FOLDER, "{}.pdf".format(title))
         self.fig.savefig(name_save_fig, bbox_inches='tight', pad_inches=0)
         self.fig.savefig(name_save_fig_pdf, bbox_inches='tight', pad_inches=0)
-
 
     def autolabel(self, rects):
         """Attach a text label above each bar in *rects*, displaying its height."""
@@ -202,16 +204,17 @@ class StatisticAnalysis:
             height = rect.get_height()
             if height in [0.7558, 0.7596]:
                 self.ax.annotate('{}'.format(height),
-                            xy=(rect.get_x() + rect.get_width() / 2, height),
-                            xytext=(-6, 15),  # 3 points vertical offset
-                            textcoords="offset points",
-                            ha='center', va='bottom', rotation=0, fontweight='bold')
+                                 xy=(rect.get_x() + rect.get_width() / 2, height),
+                                 xytext=(-6, 15),  # 3 points vertical offset
+                                 textcoords="offset points",
+                                 ha='center', va='bottom', rotation=0, fontweight='bold')
                 continue
             self.ax.annotate('{}'.format(height),
-                        xy=(rect.get_x() + rect.get_width() / 2, height),
-                        xytext=(-6, 15),  # 3 points vertical offset
-                        textcoords="offset points",
-                        ha='center', va='bottom', rotation=0)
+                             xy=(rect.get_x() + rect.get_width() / 2, height),
+                             xytext=(-6, 15),  # 3 points vertical offset
+                             textcoords="offset points",
+                             ha='center', va='bottom', rotation=0)
+
 
 if __name__ == '__main__':
     #
@@ -250,7 +253,6 @@ if __name__ == '__main__':
         "GNN - K=2", "GNN - K=3"
     ]
 
-
     #####################################################################################
 
     # label_exp_setup = "ImpactOE"
@@ -277,7 +279,6 @@ if __name__ == '__main__':
     DATA_FOLDER = '/local/scratch/ql295/Data/MultiAgentDataset/Results_best/Statistics_generalization/'
     epoch_text = "IROS"
 
-
     title_text = "{}_TR_{}".format(title_text, trained_num_agent)
 
     SAVEDATA_FOLDER = os.path.join(DATA_FOLDER, 'Summary', title_text)
@@ -288,5 +289,6 @@ if __name__ == '__main__':
     except FileExistsError:
         pass
 
-    ResultAnalysis = StatisticAnalysis(DATA_FOLDER, SAVEDATA_FOLDER, select_label, trained_num_agent, list_testing_num_agent)
+    ResultAnalysis = StatisticAnalysis(
+        DATA_FOLDER, SAVEDATA_FOLDER, select_label, trained_num_agent, list_testing_num_agent)
     ResultAnalysis.plot_hist_data(title_text, text_legend)
