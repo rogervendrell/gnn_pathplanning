@@ -38,6 +38,11 @@ python3 -m venv myenv && source myenv/bin/activate
 pip3 install -r gnn_pathplanning/requirements.txt
 ```
 
+**fix matplotlib**
+```bash
+pip3 uninstall matplotlib && pip3 install matplotlib==3.1.2
+```
+
 **results dir**
 ```bash
 mkdir trainingResults trainingResults/Tensorboard_CG50
