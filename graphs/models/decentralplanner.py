@@ -286,7 +286,7 @@ class DecentralPlannerNet(nn.Module):
         return nn.Sequential(*layers)
 
     def addGSO(self, S):
-        print(f" ------->>>>> Entered addGSO with S being {S.shape}")
+        # print(f" ------->>>>> Entered addGSO with S being {S.shape}")
         # We add the GSO on real time, this GSO also depends on time and has
         # shape either B x N x N or B x E x N x N
         if self.E == 1:  # It is B x T x N x N
@@ -305,20 +305,20 @@ class DecentralPlannerNet(nn.Module):
         extractFeatureMap = torch.zeros(
             B, self.numFeatures2Share, self.numAgents).to(self.config.device)
         for id_agent in range(self.numAgents):
-            print(f">>> >>> Forward pass for agent {id_agent}")
+            # print(f">>> >>> Forward pass for agent {id_agent}")
             input_currentAgent = inputTensor[:, id_agent]
-            print(
-                f"    >>> Input current agent shape={input_currentAgent.shape}")
+            # print(
+            #     f"    >>> Input current agent shape={input_currentAgent.shape}")
             featureMap = self.ConvLayers(input_currentAgent)
-            print(
-                f"    >>> Feature map (input after CNN) shape={featureMap.shape}")
+            # print(
+            #     f"    >>> Feature map (input after CNN) shape={featureMap.shape}")
             featureMapFlatten = featureMap.view(featureMap.size(0), -1)
-            print(
-                f"    >>> Flattened feature map shape={featureMapFlatten.shape}")
+            # print(
+            #     f"    >>> Flattened feature map shape={featureMapFlatten.shape}")
             # extractFeatureMap[:, :, id_agent] = featureMapFlatten
             compressfeature = self.compressMLP(featureMapFlatten)
-            print(
-                f"    >>> Compressed features shape={featureMapFlatten.shape}")
+            # print(
+            #     f"    >>> Compressed features shape={featureMapFlatten.shape}")
             extractFeatureMap[:, :, id_agent] = compressfeature  # B x F x N
 
         # DCP
@@ -327,39 +327,39 @@ class DecentralPlannerNet(nn.Module):
             # There is a 3*l below here, because we have three elements per
             # layer: graph filter, nonlinearity and pooling, so after each layer
             # we're actually adding elements to the (sequential) list.
-            print(
-                f"    >>> At layer={l}, self.S has shape={self.S.shape}")
+            # print(
+            #     f"    >>> At layer={l}, self.S has shape={self.S.shape}")
             self.GFL[2 * l].addGSO(self.S)  # add GSO for GraphFilter
 
         # B x F x N - > B x G x N,
-        print(
-            f"    >>> PRE-GFL: extractFeatureMap shape={extractFeatureMap.shape}")
+        # print(
+        #     f"    >>> PRE-GFL: extractFeatureMap shape={extractFeatureMap.shape}")
         sharedFeature = self.GFL(extractFeatureMap)
-        print(
-            f"    >>> POST-GFL: sharedFeature shape={sharedFeature.shape}")
+        # print(
+        #     f"    >>> POST-GFL: sharedFeature shape={sharedFeature.shape}")
 
         action_predict = []
         for id_agent in range(self.numAgents):
-            print(f">>> >>> Continuing forward pass for agent {id_agent}")
+            # print(f">>> >>> Continuing forward pass for agent {id_agent}")
 
             # DCP_nonGCN
             # sharedFeature_currentAgent = extractFeatureMap[:, :, id_agent]
             # DCP
             # torch.index_select(sharedFeature_currentAgent, 3, id_agent)
             sharedFeature_currentAgent = sharedFeature[:, :, id_agent]
-            print(
-                f"    >>> Shared feature current agent shape={sharedFeature_currentAgent.shape}")
+            # print(
+            #     f"    >>> Shared feature current agent shape={sharedFeature_currentAgent.shape}")
             # print("sharedFeature_currentAgent.requires_grad: {}\n".format(sharedFeature_currentAgent.requires_grad))
             # print("sharedFeature_currentAgent.grad_fn: {}\n".format(sharedFeature_currentAgent.grad_fn))
 
             sharedFeatureFlatten = sharedFeature_currentAgent.view(
                 sharedFeature_currentAgent.size(0), -1)
-            print(
-                f"    >>> Shared feature flatten current agent shape={sharedFeatureFlatten.shape}")
+            # print(
+            #     f"    >>> Shared feature flatten current agent shape={sharedFeatureFlatten.shape}")
             action_currentAgents = self.actionsMLP(
                 sharedFeatureFlatten)  # 1 x 5
-            print(
-                f"    >>> Action current agent shape={action_currentAgents.shape}")
+            # print(
+            #     f"    >>> Action current agent shape={action_currentAgents.shape}")
             action_predict.append(action_currentAgents)  # N x 5
 
         return action_predict
