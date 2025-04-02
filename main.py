@@ -28,8 +28,9 @@ os.system("taskset -p 0xFFFFFFFF %d" % (os.getpid()))
 # os.system("taskset -p -c 0-7,16-23 %d" % (os.getpid()))
 # os.system("taskset -p -c 8-15,24-31 %d" % (os.getpid()))
 
-os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
-os.environ["CUDA_VISIBLE_DEVICES"]="0,1,2"
+os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0,1,2"
+
 
 def main():
     # parse the path of the json config file
@@ -59,10 +60,12 @@ def main():
 
     arg_parser.add_argument('--num_testset', type=int, default=4500)
     arg_parser.add_argument('--test_epoch', type=int, default=0)
-    arg_parser.add_argument('--lastest_epoch', action='store_true', default=False)
-    arg_parser.add_argument('--best_epoch', action='store_true', default=False)
+    arg_parser.add_argument(
+        '--lastest_epoch', action='store_true', default=False)
+    arg_parser.add_argument('--best_epoch', action='store_true', default=True)
     arg_parser.add_argument('--con_train', action='store_true', default=False)
-    arg_parser.add_argument('--test_general', action='store_true', default=False)
+    arg_parser.add_argument(
+        '--test_general', action='store_true', default=False)
     arg_parser.add_argument('--train_TL', action='store_true', default=False)
     arg_parser.add_argument('--Use_infoMode', type=int, default=0)
     arg_parser.add_argument('--log_anime', action='store_true', default=False)
