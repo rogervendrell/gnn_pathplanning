@@ -143,10 +143,10 @@ class DecentralPlannerNet(nn.Module):
             self.ConvLayers = self.make_layers(cfg, batch_norm=True)
             self.compressMLP = nn.Sequential(
                 nn.Linear(512, 4096),
-                nn.ReLU(inplace=True),
+                nn.ReLU(inplace=False),
                 nn.Dropout(),
                 nn.Linear(4096, 4096),
-                nn.ReLU(inplace=True),
+                nn.ReLU(inplace=False),
                 nn.Dropout(),
                 nn.Linear(4096, 128)
             )
@@ -161,7 +161,7 @@ class DecentralPlannerNet(nn.Module):
                                        kernel_size=nFilterTaps[l], stride=numStride[l], padding=nPaddingSzie[l],
                                        bias=True))
                 convl.append(nn.BatchNorm2d(num_features=numChannel[l + 1]))
-                convl.append(nn.ReLU(inplace=True))
+                convl.append(nn.ReLU(inplace=False))
 
                 W_tmp = int((convW[l] - nFilterTaps[l] + 2 *
                             nPaddingSzie[l]) / numStride[l]) + 1
@@ -194,7 +194,7 @@ class DecentralPlannerNet(nn.Module):
             for l in range(dimCompressMLP):
                 compressmlp.append(
                     nn.Linear(in_features=numCompressFeatures[l], out_features=numCompressFeatures[l + 1], bias=True))
-                compressmlp.append(nn.ReLU(inplace=True))
+                compressmlp.append(nn.ReLU(inplace=False))
 
             self.compressMLP = nn.Sequential(*compressmlp)
 
@@ -229,17 +229,19 @@ class DecentralPlannerNet(nn.Module):
             # we're actually adding elements to the (sequential) list.
 
             # \\ Graph attentional filtering stage:
-            gfl.append(gml.GraphAttentionalBatch(
+            gfl.append(gml.GraphFilterBatchAttentional(
                 G=self.F[l],
                 F=self.F[l+1],
-                K=1,
+                K=self.K[l],
+                P=1,
                 E=self.E,
+                bias=True,
                 nonlinearity=nn.functional.relu,
                 concatenate=False)
             )
 
             # \\ Nonlinearity
-            gfl.append(nn.ReLU(inplace=True))
+            gfl.append(nn.ReLU(inplace=False))
 
         # And now feed them into the sequential
         self.GFL = nn.Sequential(*gfl)  # Graph Filtering Layers
@@ -256,7 +258,7 @@ class DecentralPlannerNet(nn.Module):
             if l < (dimActionMLP - 1):
                 actionsfc.append(
                     nn.Linear(in_features=numActionFeatures[l], out_features=numActionFeatures[l + 1], bias=True))
-                actionsfc.append(nn.ReLU(inplace=True))
+                actionsfc.append(nn.ReLU(inplace=False))
             else:
                 actionsfc.append(
                     nn.Linear(in_features=numActionFeatures[l], out_features=numActionFeatures[l + 1], bias=True))
@@ -278,7 +280,7 @@ class DecentralPlannerNet(nn.Module):
             if batch_norm:
                 layers += [nn.BatchNorm2d(l)]
 
-            layers += [nn.ReLU(inplace=True)]
+            layers += [nn.ReLU(inplace=False)]
             input_channel = l
 
         return nn.Sequential(*layers)
@@ -330,7 +332,11 @@ class DecentralPlannerNet(nn.Module):
             self.GFL[2 * l].addGSO(self.S)  # add GSO for GraphFilter
 
         # B x F x N - > B x G x N,
+        print(
+            f"    >>> PRE-GFL: extractFeatureMap shape={extractFeatureMap.shape}")
         sharedFeature = self.GFL(extractFeatureMap)
+        print(
+            f"    >>> POST-GFL: sharedFeature shape={sharedFeature.shape}")
 
         action_predict = []
         for id_agent in range(self.numAgents):
