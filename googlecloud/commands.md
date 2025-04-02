@@ -38,6 +38,11 @@ python3 -m venv myenv && source myenv/bin/activate
 pip3 install -r gnn_pathplanning/requirements.txt
 ```
 
+**additional**
+```bash
+pip3 install pyyaml && pip3 install torchsummaryX && pip3 install hashids && pip3 install seaborn
+```
+
 **fix matplotlib**
 ```bash
 pip3 uninstall matplotlib && pip3 install matplotlib==3.1.2
@@ -48,22 +53,12 @@ pip3 uninstall matplotlib && pip3 install matplotlib==3.1.2
 mkdir trainingResults trainingResults/Tensorboard_CG50
 ```
 
-**torchsummary**
-```bash
-pip3 install torchsummaryX
-```
-
-**hashids**
-```bash
-pip3 install hashids
-```
-
 **rename files**
 ```bash
 mv gnn_pathplanning/graphs/models/decentralplanner.py gnn_pathplanning/graphs/models/decentralplanner_GAT.py && mv gnn_pathplanning/graphs/models/decentralplanner_normal.py gnn_pathplanning/graphs/models/decentralplanner.py
 ```
 
-**train**
+**train (ojo nGraohFilterTaps)**
 ```bash
 cd gnn_pathplanning/ && python3 main.py configs/dcp_ECBS_GAT_gcloud.json --mode train  --map_w 20 --nGraphFilterTaps 3  --num_agents 10  --trained_num_agents 10
 ```
