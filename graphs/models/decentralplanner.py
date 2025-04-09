@@ -229,16 +229,25 @@ class DecentralPlannerNet(nn.Module):
             # we're actually adding elements to the (sequential) list.
 
             # \\ Graph attentional filtering stage:
+            self.P = 4  # Number of attention heads
             gfl.append(gml.GraphFilterBatchAttentional(
                 G=self.F[l],
                 F=self.F[l+1],
                 K=self.K[l],
-                P=1,
+                P=self.P,
                 E=self.E,
                 bias=True,
                 nonlinearity=nn.functional.relu,
-                concatenate=False)
+                concatenate=True)
             )
+
+            # If we use 4 attention heads and concatenate their results, the
+            # output of the layer will be 4 times larger than desired. We
+            # therefore need a fully connected layer to reduce the size accordingly.
+            # gfl.append(nn.Linear(in_features=self.P * self.F[l+1],
+            #  out_features=self.F[l+1]))
+            gfl.append(gml.LinearOverNodes(in_features=self.P * self.F[l+1],
+                                           out_features=self.F[l+1]))
 
             # \\ Nonlinearity
             gfl.append(nn.ReLU(inplace=False))

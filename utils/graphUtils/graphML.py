@@ -3372,3 +3372,22 @@ class GraphFilterBatchAttentional(nn.Module):
         else:
             reprString += "no GSO stored"
         return reprString
+
+
+class LinearOverNodes(nn.Module):
+    # Wrapper to allow the projection of the concatenated attention head results
+    # back to the desired 
+    def __init__(self, in_features, out_features):
+        super().__init__()
+        self.linear = nn.Linear(in_features, out_features)
+
+        # Initialise here instead of with the weights_init function
+        torch.nn.init.xavier_normal_(self.linear.weight)
+        self.linear.bias.data.fill_(0.0)
+
+    def forward(self, x):
+        # x: [batch_size, in_features, num_nodes]
+        x = x.permute(0, 2, 1)  # → [batch_size, num_nodes, in_features]
+        x = self.linear(x)      # → [batch_size, num_nodes, out_features]
+        x = x.permute(0, 2, 1)  # → [batch_size, out_features, num_nodes]
+        return x

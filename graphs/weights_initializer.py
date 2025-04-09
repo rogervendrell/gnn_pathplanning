@@ -4,12 +4,16 @@ A file for all models' weight initialization functions
 import torch
 from torch import nn
 import numpy as np
+import torch_geometric.nn
 import graphs
 import math
+import torch_geometric
 
 
 def weights_init(m):
     classname = m.__class__.__name__
+    print(m.__class__)
+
     if classname.find('Conv') != -1:
         # m.weight.data.normal_(0.0, 0.02)
         torch.nn.init.xavier_normal_(m.weight)
@@ -17,6 +21,9 @@ def weights_init(m):
     elif classname.find('BatchNorm') != -1:
         m.weight.data.normal_(1.0, 0.02)
         m.bias.data.fill_(0.0)
+
+    elif classname.find('LinearOverNodes') != -1:
+        return
 
     elif classname.find('Linear') != -1:
         torch.nn.init.xavier_normal_(m.weight)
@@ -37,7 +44,7 @@ def weights_init_normal(m):
 
 
 def init_model_weights(m):
-    ### initialize
+    # initialize
     for m in m.modules():
         if isinstance(m, nn.Conv2d):
             n = m.kernel_size[0] * m.kernel_size[1] * m.out_channels
