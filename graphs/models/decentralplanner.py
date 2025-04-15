@@ -241,6 +241,9 @@ class DecentralPlannerNet(nn.Module):
                 concatenate=True)
             )
 
+            # \\ Nonlinearity
+            gfl.append(nn.ReLU(inplace=False))
+
             # If we use 4 attention heads and concatenate their results, the
             # output of the layer will be 4 times larger than desired. We
             # therefore need a fully connected layer to reduce the size accordingly.
@@ -248,7 +251,7 @@ class DecentralPlannerNet(nn.Module):
             #  out_features=self.F[l+1]))
             gfl.append(gml.LinearOverNodes(in_features=self.P * self.F[l+1],
                                            out_features=self.F[l+1]))
-
+            
             # \\ Nonlinearity
             gfl.append(nn.ReLU(inplace=False))
 
