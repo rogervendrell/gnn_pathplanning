@@ -58,7 +58,17 @@ mkdir trainingResults trainingResults/Tensorboard_CG50
 mv gnn_pathplanning/graphs/models/decentralplanner.py gnn_pathplanning/graphs/models/decentralplanner_GAT.py && mv gnn_pathplanning/graphs/models/decentralplanner_normal.py gnn_pathplanning/graphs/models/decentralplanner.py
 ```
 
-**train (ojo nGraohFilterTaps)**
+**instal·lar tmux**
 ```bash
-cd gnn_pathplanning/ && python3 main.py configs/dcp_ECBS_GAT_gcloud.json --mode train  --map_w 20 --nGraphFilterTaps 3  --num_agents 10  --trained_num_agents 10
+sudo apt install tmux
+```
+
+**tmux new session amb nom**
+```bash
+tmux new -s mysession
+```
+
+**train**
+```bash
+python3 main.py configs/dcp_ECBS_GAT_gcloud.json --mode train  --map_w 20 --nGraphFilterTaps 2  --num_agents 10  --trained_num_agents 10
 ```
