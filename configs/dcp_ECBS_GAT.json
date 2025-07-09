@@ -32,7 +32,7 @@
   "cuda": false,
   "gpu_device":0,
 
-  "checkpoint_file": "checkpoint.pth.tar",
+  "checkpoint_file": "/home/roger/Documents/GitHub/gnn_pathplanning/weights/weights_GAT/model_best.pth.tar",
   "seed": 1337,
 
   "learning_rate": 0.001,
