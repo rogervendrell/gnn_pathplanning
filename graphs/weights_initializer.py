@@ -4,15 +4,12 @@ A file for all models' weight initialization functions
 import torch
 from torch import nn
 import numpy as np
-import torch_geometric.nn
 import graphs
 import math
-import torch_geometric
 
 
 def weights_init(m):
     classname = m.__class__.__name__
-    print(m.__class__)
 
     if classname.find('Conv') != -1:
         # m.weight.data.normal_(0.0, 0.02)
